@@ -1,0 +1,52 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.11'
+}
+
+test {
+    maxParallelForks = 5
+    forkEvery = 50
+
+    useJUnit {
+    }
+}
+
+task runSlow(type: Test) {
+    maxParallelForks = 5
+    forkEvery = 50
+
+    useJUnit {
+        includeCategories 'SlowTest'
+    }
+}
+
+task runFast(type: Test) {
+    maxParallelForks = 5
+    forkEvery = 50
+
+    useJUnit {
+        includeCategories 'FastTest'
+    }
+}
+
+task runCategories(type: Test) {
+    doFirst {
+        if (project.hasProperty('categories')) {
+            categories = project.categories
+        } else {
+            throw new InvalidUserDataException('Must specify one or more categories!')
+        }
+
+        maxParallelForks = 5
+        forkEvery = 50
+
+        useJUnit {
+            includeCategories categories
+        }
+    }
+}
